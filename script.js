@@ -68,7 +68,8 @@ function shuffle(array) {
 
 // ====== Flip card ======
 function flipCard() {
-    if (lockBoard || this.classList.contains('flipped') || this.classList.contains('matched')) return;
+    if (lockBoard) return;
+    if (this.classList.contains('flipped') || this.classList.contains('matched')) return;
 
     this.classList.add('flipped');
 
@@ -92,14 +93,16 @@ function checkMatch() {
         secondCard.classList.add('matched');
 
         updateScore();
-        resetFlip();
-        checkWin();
+        setTimeout(() => {
+            resetFlip();
+            checkWin();
+        }, 500); // Short delay for smoother visual match
     } else {
         setTimeout(() => {
             firstCard.classList.remove('flipped');
             secondCard.classList.remove('flipped');
             resetFlip();
-        }, 1000);
+        }, 1000); // Delay to allow user to see the cards
     }
 }
 

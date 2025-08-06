@@ -12,7 +12,6 @@ const cardData = [
 
 const gameBoard = document.querySelector('.game-board');
 const scoreEl = document.querySelector('.score');
-const highScoreEl = document.querySelector('.high-score-value');
 const timerEl = document.querySelector('.timer');
 const bestTimeEl = document.querySelector('.best-time');
 const winPopup = document.querySelector('.win-popup');
@@ -20,7 +19,6 @@ const winTimeMessage = document.querySelector('.win-time-message');
 const winBestTimeMessage = document.querySelector('.win-best-time-message');
 
 let score = 0;
-let highScore = 0;
 let timer = 0;
 let timerInterval;
 let firstCard = null;
@@ -70,16 +68,19 @@ function shuffle(array) {
 
 // ====== Flip card ======
 function flipCard() {
-    if (lockBoard || this.classList.contains('matched') || this === firstCard) return;
+    if (lockBoard || this.classList.contains('flipped') || this.classList.contains('matched')) return;
 
     this.classList.add('flipped');
 
     if (!firstCard) {
         firstCard = this;
-    } else {
-        secondCard = this;
-        checkMatch();
+        return;
     }
+
+    secondCard = this;
+    lockBoard = true;
+
+    checkMatch();
 }
 
 // ====== Check for match ======
@@ -89,11 +90,11 @@ function checkMatch() {
     if (isMatch) {
         firstCard.classList.add('matched');
         secondCard.classList.add('matched');
+
         updateScore();
         resetFlip();
         checkWin();
     } else {
-        lockBoard = true;
         setTimeout(() => {
             firstCard.classList.remove('flipped');
             secondCard.classList.remove('flipped');
@@ -106,10 +107,6 @@ function checkMatch() {
 function updateScore() {
     score++;
     scoreEl.textContent = score;
-    if (score > highScore) {
-        highScore = score;
-        highScoreEl.textContent = highScore;
-    }
 }
 
 // ====== Reset flipped cards ======
@@ -174,7 +171,6 @@ function updateBestTime(currentTime) {
 window.onload = () => {
     createGrid();
     startTimer();
-    highScoreEl.textContent = highScore;
     if (bestTime !== null && bestTimeEl) {
         bestTimeEl.textContent = `${bestTime}s`;
     }
